@@ -26,6 +26,7 @@ class CreateGameRequest extends FormRequest
         return [
 			'name' => ['required', 'string', 'min:2', 'max:100'],
 			'studio' => ['required', 'string', 'min:2', 'max:50'],
+            'genre' => ['array']
         ];
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Game;
 use App\Http\Requests\CreateGameRequest;
 use App\Http\Requests\UpdateGameRequest;
 use App\Http\Resources\GameResource;
+use App\Models\Genre;
 
 class GameController extends Controller
 {
@@ -23,6 +24,11 @@ class GameController extends Controller
     public function store(CreateGameRequest $request)
     {
         $game = Game::create($request->validated());
+
+        $genres = $request->input('genres');
+        if ($genres) {
+            $this->attachGenre($game, $genres);
+        }
         
         if($game) {
             return response()->json(['message' => 'Game created successfully']);
@@ -49,7 +55,13 @@ class GameController extends Controller
      */
     public function update(UpdateGameRequest $request, Game $game)
     {
-        $game = $game->fill($request->validated())->save();
+        
+        $genres = $request->input('genres');
+        if ($genres) {
+            $this->attachGenre($game, $genres);
+        }
+        
+        $game = $game->update($request->validated());
        
         if($game){
             return response()->json(['message' => 'Game updated successfully']);
@@ -76,5 +88,13 @@ class GameController extends Controller
 
 			return response()->json(['success' => false]);
 		}
+    }
+
+    public function attachGenre(Game $game, $genres) : void
+    {
+        foreach ($genres as $genre) {
+            $genre = Genre::where('name', $genre)->pluck('id');
+            $game->genres()->sync($genre[0]);
+        }
     }
 }
