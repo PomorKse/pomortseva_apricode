@@ -3,17 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game;
-use Illuminate\Http\Request;
 use App\Http\Requests\CreateGameRequest;
 use App\Http\Requests\UpdateGameRequest;
+use App\Http\Resources\GameResource;
 
 class GameController extends Controller
 {
     public function index(Game $games)
     {
-        $games = $games->all();
-
-        return response()->json(['games' => $games]);
+        return GameResource::collection(($games->all()));
     }
 
     /**
@@ -29,7 +27,6 @@ class GameController extends Controller
         if($game) {
             return response()->json(['message' => 'Game created successfully']);
         }
-
     }
 
     /**
@@ -40,9 +37,7 @@ class GameController extends Controller
      */
     public function show(Game $game)
     {
-        $game = $game->find($game);
-
-        return response()->json(['game' => $game]);
+        return new GameResource($game);
     }
 
     /**
@@ -59,7 +54,6 @@ class GameController extends Controller
         if($game){
             return response()->json(['message' => 'Game updated successfully']);
         }
-
     }
 
     /**

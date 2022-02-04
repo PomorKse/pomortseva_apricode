@@ -4,16 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateGenreRequest;
 use App\Http\Requests\UpdateGenreRequest;
-use Illuminate\Http\Request;
+use App\Http\Resources\GenreResource;
 use App\Models\Genre;
 
 class GenreController extends Controller
 {
     public function index(Genre $genres)
     {
-        $genres = $genres->all();
-
-        return response()->json(['genres' => $genres]);
+        return GenreResource::collection($genres->all());
     }
 
     /**
@@ -29,7 +27,6 @@ class GenreController extends Controller
         if($genre) {
             return response()->json(['message' => 'Genre created successfully']);
         }
-
     }
 
     /**
@@ -40,9 +37,7 @@ class GenreController extends Controller
      */
     public function show(Genre $genre)
     {
-        $genre = $genre->find($genre);
-
-        return response()->json(['genre' => $genre]);
+        return new GenreResource($genre);
     }
 
     /**
@@ -59,7 +54,6 @@ class GenreController extends Controller
         if($genre){
             return response()->json(['message' => 'Genre updated successfully']);
         }
-
     }
 
     /**
