@@ -2,79 +2,72 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateGenreRequest;
-use App\Http\Requests\UpdateGenreRequest;
+use App\Contracts\GenreInterface;
+use App\Http\Requests\Genre\CreateGenreRequest;
+use App\Http\Requests\Genre\UpdateGenreRequest;
 use App\Http\Resources\GenreResource;
 use App\Models\Genre;
 
 class GenreController extends Controller
 {
-    public function index(Genre $genres)
+    public function index(GenreInterface $service)
     {
-        return GenreResource::collection($genres->all());
+        $games = $service->getAllData();
+        
+        return $games;
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param GenreInterface $service
+     * @param CreateGenreRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateGenreRequest $request)
+    public function store(GenreInterface $service, CreateGenreRequest $request)
     {
-        $genre = Genre::create($request->validated());
-        
-        if($genre) {
-            return response()->json(['message' => 'Genre created successfully']);
-        }
+        $validated = $request->validated();
+
+        return $service->updateOrCreate($id = null, $validated);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param GenreInterface $service
+     * @param Genre $genre
      * @return \Illuminate\Http\Response
      */
-    public function show(Genre $genre)
+    public function show(GenreInterface $service, Genre $genre)
     {
-        return new GenreResource($genre);
+        $genres = $service->getOne($genre);
+        
+        return $genres;
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  UpdateGenreRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateGenreRequest $request, Genre $genre)
+    public function update(GenreInterface $service, UpdateGenreRequest $request, $id)
     {
-        $genre = $genre->fill($request->validated())->save();
-       
-        if($genre){
-            return response()->json(['message' => 'Genre updated successfully']);
-        }
+        $validated = $request->validated();
+
+        return $service->updateOrCreate($id, $validated);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param GenreInterface $service
+     * @param Genre $genre
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Genre $genre)
+    public function destroy(GenreInterface $service, Genre $genre)
     {
-        try{
-			$genre->delete();
-
-			return response()->json([
-                'success' => true,
-                'message' => 'Genre deleted successfully'
-            ]);
-		}catch (\Exception $e) {
-			\Log::error($e->getMessage() . PHP_EOL, $e->getTrace());
-
-			return response()->json(['success' => false]);
-		}
+        return $service->delete($genre);
     }
 }

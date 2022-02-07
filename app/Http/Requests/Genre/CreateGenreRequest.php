@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Genre;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateGenreRequest extends FormRequest
+class CreateGenreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class UpdateGenreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'string', 'min:2', 'max:50'],
+            'name' => ['required', 'string', 'unique:genres,name', 'min:2', 'max:50'],
         ];
     }
 }

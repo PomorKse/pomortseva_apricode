@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Genre;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateGameRequest extends FormRequest
+class UpdateGenreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,7 @@ class UpdateGameRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'string', 'min:2', 'max:100'],
-			'studio' => ['required', 'string', 'min:2', 'max:50'],
-            'genre' => ['array']
+            'name' => ['required', 'string', 'unique:genres,name', 'min:2', 'max:50'],
         ];
     }
 }
