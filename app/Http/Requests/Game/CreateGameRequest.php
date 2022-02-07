@@ -24,9 +24,8 @@ class CreateGameRequest extends FormRequest
     public function rules()
     {
         return [
-			'name' => ['required', 'string', 'min:2', 'max:100'],
+			'name' => ['required', 'string', 'unique:games,name', 'min:2', 'max:100'],
 			'studio' => ['required', 'string', 'min:2', 'max:50'],
-            //'genre' => ['array']
         ];
     }
 }
